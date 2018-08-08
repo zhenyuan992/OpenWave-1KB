@@ -51,6 +51,7 @@ from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
 from mpl_toolkits.axes_grid1 import host_subplot
 import mpl_toolkits.axisartist as AA
+#from PyQt5 import QtCore, QtGui
 from PySide import QtCore, QtGui
 import numpy as np
 from PIL import Image
@@ -137,6 +138,18 @@ class Window(QtGui.QWidget):
         if(dso.connection_status==0):
             self.captureBtn.setEnabled(False)
 
+        # Continuous capture
+        self.contBtn = QtGui.QPushButton('Cont')
+        self.contBtn.setToolTip("Toggle continuous mode.")
+        self.contBtn.setFixedSize(100, 50)
+        self.contFlag=False #Initial state -> do not capture continuosly
+        self.contBtn.setCheckable(True)
+        self.contBtn.setChecked(False)
+        self.contBtn.clicked.connect(self.contAction)
+        self.contTimer=QtCore.QTimer(self)
+        self.contTimer.timeout.connect(self.captureAction)
+        #self.contTimer.timeout.connect(self.handleCapture)
+        
         #Type: Raw Data/Image
         self.typeBtn = QtGui.QPushButton('Raw Data')
         self.typeBtn.setToolTip("Switch to get raw data or image from DSO.")
@@ -204,6 +217,7 @@ class Window(QtGui.QWidget):
         self.wavectrlLayout.addWidget(self.panBtn)
         self.wavectrlLayout.addWidget(self.homeBtn)
         self.wavectrlLayout.addWidget(self.captureBtn)
+        self.wavectrlLayout.addWidget(self.contBtn)
         
         self.saveloadLayout = QtGui.QHBoxLayout()
         self.saveloadLayout.addWidget(self.saveBtn)
@@ -219,7 +233,7 @@ class Window(QtGui.QWidget):
         main_box.addLayout(self.wavectrlLayout)   #Zoom In/Out...
         main_box.addLayout(self.ctrl_box)         #Save/Load/Quit
         self.setLayout(main_box)
-        
+
     def typeAction(self):
         if(self.typeFlag==True):
             self.typeFlag=False
@@ -330,6 +344,17 @@ class Window(QtGui.QWidget):
             dso.closeIO()
         self.close()
     
+    def contAction(self):
+        if(self.contFlag==True):
+            self.contFlag=False
+        else:
+            self.contFlag=True
+        self.contBtn.setChecked(self.contFlag)
+        if self.contFlag:
+            self.contTimer.start(200) # sample every xxx milliseconds
+        else:
+            self.contTimer.stop()
+            
     def captureAction(self):
         dso.iWave=[[], [], [], []]
         dso.ch_list=[]
