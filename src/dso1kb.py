@@ -104,14 +104,17 @@ class Dso:
             except:
                 print 'Open LAN port failed!'
                 return
-        elif('/dev/ttyACM' in str) or ('COM' in str): #Check if str is COM port.
+        elif('/dev/ttyACM' in str) or ('COM' in str) or ('/dev/cu.' in str):
+            # str is COM port.
             try:
+                print ("Opening serial port", str)
                 self.IO=com(str)
             except:
                 print 'Open COM port failed!'
                 return
             self.IO.clearBuf()
         else:
+            print ("ERROR: unknown device: ", str)
             return
         self.write=self.IO.write
         self.read=self.IO.read
