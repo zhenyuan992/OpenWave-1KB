@@ -6,19 +6,19 @@ Copyright:
 ----------------------------------------------------------------------
 gw_com_1kb is Copyright (c) 2014 Good Will Instrument Co., Ltd All Rights Reserved.
 
-This program is free software; you can redistribute it and/or modify it under the terms 
-of the GNU Lesser General Public License as published by the Free Software Foundation; 
+This program is free software; you can redistribute it and/or modify it under the terms
+of the GNU Lesser General Public License as published by the Free Software Foundation;
 either version 2.1 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
-without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU Lesser General Public License for more details.
 
-You can receive a copy of the GNU Lesser General Public License from 
+You can receive a copy of the GNU Lesser General Public License from
 http://www.gnu.org/
 
 Note:
-gw_com_1kb uses third party software which is copyrighted by its respective copyright holder. 
+gw_com_1kb uses third party software which is copyrighted by its respective copyright holder.
 For details see the copyright notice of the individual package.
 
 ----------------------------------------------------------------------
@@ -45,31 +45,31 @@ class com:
     def __init__(self, port):
         try:
             self.IO = serial.Serial(port, baudrate=38400, bytesize=8, parity ='N', stopbits=1, xonxoff=False, dsrdtr=False, timeout=5)
-        except serial.SerialException, e:
-            print e.message
-            raise Exception,'__init__(), open port failed!'
+        except serial.SerialException as e:
+            print (e.message)
+            raise Exception('__init__(), open port failed!')
 
     def write(self, str):
         try:
-            self.IO.write(str)
-        except serial.SerialException, e:
-            print "write(), %s" % e
-        
+            self.IO.write(str.encode())
+        except serial.SerialException as e:
+            print ("write(), %s" % e)
+
     def read(self):
         try:
             return self.IO.readline()
-        except serial.SerialException, e:
-            print "read(), %s" % e
+        except serial.SerialException as e:
+            print ("read(), %s" % e)
             return ''
-        
+
     def readBytes(self, length):
         try:
             str=self.IO.read(length)
             return str
-        except serial.SerialException, e:
-            print "readBytes(), %s" % e
+        except serial.SerialException as e:
+            print ("readBytes(), %s" % e)
             return ''
-    
+
     def clearBuf(self):
         time.sleep(0.5)
         while(True):
@@ -77,21 +77,21 @@ class com:
             if(num==0):
                 break
             else:
-                print '-',
+                print ('-')
             self.IO.flushInput()    #Clear input buffer.
             time.sleep(0.1)
-    
+
     def closeIO(self):
         self.IO.close()
-    
+
     @classmethod
     def connection_test(self, port):
         try:
             __port = serial.Serial(port, baudrate=38400, bytesize=8, parity ='N', stopbits=1, xonxoff=False, dsrdtr=False, timeout=5)
             __port.close()
             return port
-        except serial.SerialException, e:
-            print e.message
+        except serial.SerialException as e:
+            print (e.message)
             return ''
 
     @classmethod
@@ -99,20 +99,20 @@ class com:
         port_list=list(list_ports.comports())
         num=len(port_list)
         #print 'num=', num
-        for i in xrange(num):
+        for i in range(num):
             str=port_list[i][2].split('=')
             #print str
             if(str[0]=='USB VID:PID'):
                 str=str[1].split(' ')[0] #Extract VID and PID from string.
                 str=str.split(':')
-                print str
+                print (str)
                 if(str[0] in usb_id):
                     if(str[1].lower() in usb_id[str[0]]):
                         port=port_list[i][0]
                         try:
                             __port = serial.Serial(port, baudrate=38400, bytesize=8, parity ='N', stopbits=1, xonxoff=False, dsrdtr=False, timeout=5)
-                        except serial.SerialException, e:
-                            print e.message
+                        except serial.SerialException as e:
+                            print (e.message)
                             continue
                         time.sleep(0.5)
                         while(True):
@@ -120,7 +120,7 @@ class com:
                             if(num==0):
                                 break
                             else:
-                                print '-',
+                                print ('-')
                             __port.flushInput()  #Clear input buffer.
                             time.sleep(0.1)
                         __port.close()
