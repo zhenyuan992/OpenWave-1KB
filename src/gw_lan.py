@@ -50,19 +50,19 @@ class lan:
 
     def write(self, str):
         try:
-            self.IO.sendall(str)
+            self.IO.sendall(str.encode())
         except socket.error as e:
             print ("write(), socket error: %s" % e)
 
     def read(self):
-        line_buf=''
+        line_buf=b''
         while True:
             try:
                 a=self.IO.recv(1)
             except socket.error as e:
                 print ("read(), socket error: %s" % e)
                 return line_buf
-            line_buf+=a
+            line_buf += a
             if(a=='\n'):
                 return line_buf
 

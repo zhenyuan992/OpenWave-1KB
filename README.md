@@ -14,10 +14,12 @@ This icon is copyright by Good Will Instrument Co., Ltd all rights reserved.
 
 
 
-OpenWave-1KB is an open-source project. It's a simple python program that can get image or raw data from digital storage oscilloscope(GDS-1000B/DCS-1000B/IDS-1000B/DSO-1000D series) via USB port or Ethernet.  
+OpenWave-1KB is an open-source project. It's a simple python program that can get image or raw data from digital storage oscilloscope(GDS-1000B/DCS-1000B/IDS-1000B/DSO-1000D series) via USB port or Ethernet.
 
 Users can execute the same source code on Windows, Linux(Ubuntu) and Raspbian(on Raspberry Pi 2) operating system without changing a word. By using this version, users can also create multiple DSO connections at the same time.
 
+This fork adds support for running the software on macOS and with Python3 and
+Qt5.
 
 Equipment
 ------------
@@ -28,7 +30,7 @@ You have to get a new digital storage oscilloscope - GDS-1000B, GDS-1000R(GOOD W
 
 Environment
 ------------
-Currently OpenWave-1KB may be executed on Windows XP/7/8 32 or 64 bits OS. We also tested the program on Win 10, the connection is good but can't guarantee to be 100% no problem on different platforms. You have to download and install the USB driver(dso_vpo V1.08) from [www.gwinstek.com](http://www.gwinstek.com) or [here](/dso_vpo_v108.zip) when the first connection with GDS-1000B. 
+Currently OpenWave-1KB may be executed on Windows XP/7/8 32 or 64 bits OS. We also tested the program on Win 10, the connection is good but can't guarantee to be 100% no problem on different platforms. You have to download and install the USB driver(dso_vpo V1.08) from [www.gwinstek.com](http://www.gwinstek.com) or [here](/dso_vpo_v108.zip) when the first connection with GDS-1000B.
 
 Please unzip the [OpenWave-1KB V1.01.zip](/OpenWave-1KB_V1.01.zip) and find the OpenWave-1KB.exe in the folder. OpenWave-1KB.exe can be executed directly without installation. Please be noticed that the path name and folder name can't be double-byte characters.
 
@@ -62,12 +64,12 @@ Command Line Execution
     ```
     user@Ubuntu:~/workspace_python/OpenWave-1KB V1.01$ sudo python OpenWave-1KB.py ttyACM1
     ```
-    
+
 2.  Connected via USB(automatically reading config file or scanning port)
     ```
     user@Ubuntu:~/workspace_python/OpenWave-1KB V1.01$ sudo python OpenWave-1KB.py
     ```
-    
+
 3.  Connected via Ethernet:
     ```
     user@Ubuntu:~/workspace_python/OpenWave-1KB V1.01$ sudo python OpenWave-1KB.py 172.16.5.12:3000
@@ -135,7 +137,7 @@ Development Tools
 
 
 
-   
+
 Screenshot
 ------------
 **Get image:**

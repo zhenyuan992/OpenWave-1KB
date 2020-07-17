@@ -43,9 +43,9 @@ Created on JUL 12 2018
 
 Author: Kevin Meng
 """
-import matplotlib.pyplot as plt
 import matplotlib as mpl
 mpl.use("Qt5Agg")
+import matplotlib.pyplot as plt
 #mpl.rcParams['backend.qt4'] = 'PySide'  #Used for PySide.
 #mpl.rcParams['agg.path.chunksize'] = 100000 #For big data.
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas

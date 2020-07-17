@@ -228,7 +228,7 @@ class Dso:
             if(index==0): #Getting first waveform => reset self.info.
                 self.info=[[], [], [], []]
 
-            self.info[index]=self.read().decode().split(';')
+            self.info[index]=self.read().decode('ascii').split(';')
             num=len(self.info[index])
             self.info[index][num-1]=self.info[index][num-2] #Convert info[] to csv compatible format.
             self.info[index][num-2]='Mode,Fast'
