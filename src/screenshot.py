@@ -10,7 +10,8 @@ import dso1kb
 # port=com.scanComPort()
 
 #Connecting to a DSO.
-dso=dso1kb.Dso("127.0.0.1:3001")
+dso=dso1kb.Dso("10.10.0.77:3001")
+#dso=dso1kb.Dso("127.0.0.1:3001")
 
 # for i in range(1,5):
 #     print(i, dso.isChannelOn(i))
