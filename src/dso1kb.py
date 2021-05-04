@@ -46,7 +46,8 @@ import io, os, sys, time, platform
 __version__ = "1.01" #dso1kb module's version.
 
 sModelList=[['GDS-1072B','DCS-1072B','IDS-1072B','GDS-71072B','GDS-1072R','DSO-1072D',
-             'GDS-1102B','DCS-1102B','IDS-1102B','GDS-71102B','GDS-1102R','DSO-1102D'],
+             'GDS-1102B','DCS-1102B','IDS-1102B','GDS-71102B','GDS-1102R','DSO-1102D',
+             'GDS-1202B'],
             ['GDS-1054B','DCS-1054B','IDS-1054B','GDS-71054B','GDS-1054R',
              'GDS-1074B','DCS-1074B','IDS-1074B','GDS-71074B','GDS-1074R','DSO-1072D',
              'GDS-1104B','DCS-1104B','IDS-1104B','GDS-71104B','GDS-1104R','DSO-1102D']]
@@ -406,6 +407,7 @@ class Dso:
         self.write(":CHAN%d:DISP?\n" % ch)
         onoff=self.read().decode()
         onoff=onoff[:-1]
+        print ('CH%s: %s'%(ch,onoff))
         if(onoff=='ON'):
             return True
         else:
