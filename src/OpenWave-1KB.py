@@ -52,8 +52,13 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 from mpl_toolkits.axes_grid1 import host_subplot
 import mpl_toolkits.axisartist as AA
-from PyQt5 import QtCore, QtGui, QtWidgets
-#from PySide import QtCore, QtGui
+
+from PyQt5.QtWidgets import * 
+from PyQt5 import QtCore, QtGui
+from PyQt5.QtGui import * 
+from PyQt5.QtCore import * 
+import sys
+
 import numpy as np
 from PIL import Image
 import os, sys, time
@@ -101,7 +106,7 @@ def checkInterface(str):
 
     return com.scanComPort()  #Scan all the USB port.
 
-class Window(QtWidgets.QWidget):
+class Window(QWidget):
     def __init__(self, parent=None):
         super(Window, self).__init__(parent)
 
@@ -121,26 +126,26 @@ class Window(QtWidgets.QWidget):
         self.toolbar.hide()
 
         #Zoom In/out and Capture Buttons
-        self.zoomBtn = QtWidgets.QPushButton('Zoom')
+        self.zoomBtn = QPushButton('Zoom')
         self.zoomBtn.setFixedSize(100, 30)
         self.zoomBtn.clicked.connect(self.toolbar.zoom)
 
-        self.panBtn = QtWidgets.QPushButton('Pan')
+        self.panBtn = QPushButton('Pan')
         self.panBtn.setFixedSize(100, 30)
         self.panBtn.clicked.connect(self.toolbar.pan)
 
-        self.homeBtn = QtWidgets.QPushButton('Home')
+        self.homeBtn = QPushButton('Home')
         self.homeBtn.setFixedSize(100, 30)
         self.homeBtn.clicked.connect(self.toolbar.home)
 
-        self.captureBtn = QtWidgets.QPushButton('Capture')
+        self.captureBtn = QPushButton('Capture')
         self.captureBtn.setFixedSize(100, 50)
         self.captureBtn.clicked.connect(self.captureAction)
         if(dso.connection_status==0):
             self.captureBtn.setEnabled(False)
 
         # Continuous capture
-        self.contBtn = QtWidgets.QPushButton('Cont')
+        self.contBtn = QPushButton('Cont')
         self.contBtn.setToolTip("Toggle continuous mode.")
         self.contBtn.setFixedSize(100, 50)
         self.contFlag=False #Initial state -> do not capture continuosly
@@ -152,7 +157,7 @@ class Window(QtWidgets.QWidget):
         #self.contTimer.timeout.connect(self.handleCapture)
 
         #Type: Raw Data/Image
-        self.typeBtn = QtWidgets.QPushButton('Raw Data')
+        self.typeBtn = QPushButton('Raw Data')
         self.typeBtn.setToolTip("Switch to get raw data or image from DSO.")
         self.typeBtn.setFixedSize(120, 50)
         self.typeFlag=True #Initial state -> Get raw data
@@ -161,37 +166,44 @@ class Window(QtWidgets.QWidget):
         self.typeBtn.clicked.connect(self.typeAction)
 
         #Channel Selection.
-        self.ch1checkBox = QtWidgets.QCheckBox('CH1')
+        self.ch1checkBox = QCheckBox('CH1', self)
         self.ch1checkBox.setFixedSize(60, 30)
-        print(dso.isChannelOn(1))
         self.ch1checkBox.setEnabled(True)
-        self.ch2checkBox = QtWidgets.QCheckBox('CH2')
+        if(dso.isChannelOn(1)):
+            self.ch1checkBox.setChecked(True)
+        self.ch2checkBox = QCheckBox('CH2', self)
         self.ch2checkBox.setFixedSize(60, 30)
+        if(dso.isChannelOn(2)):
+            self.ch2checkBox.setChecked(True)
         if(dso.chnum==4):
-            self.ch3checkBox = QtWidgets.QCheckBox('CH3')
+            self.ch3checkBox = QCheckBox('CH3', self)
             self.ch3checkBox.setFixedSize(60, 30)
-            self.ch4checkBox = QtWidgets.QCheckBox('CH4')
+            if(dso.isChannelOn(3)):
+                self.ch3checkBox.setChecked(True)
+            self.ch4checkBox = QCheckBox('CH4', self)
             self.ch4checkBox.setFixedSize(60, 30)
+            if(dso.isChannelOn(4)):
+                self.ch4checkBox.setChecked(True)
 
         #Set channel selection layout.
-        self.selectLayout = QtWidgets.QHBoxLayout()
+        self.selectLayout = QHBoxLayout()
         self.selectLayout.addWidget(self.ch1checkBox)
         self.selectLayout.addWidget(self.ch2checkBox)
         if(dso.chnum==4):
-            self.selectLayout2 = QtWidgets.QHBoxLayout()
+            self.selectLayout2 = QHBoxLayout()
             self.selectLayout2.addWidget(self.ch3checkBox)
             self.selectLayout2.addWidget(self.ch4checkBox)
 
-        self.typeLayout = QtWidgets.QHBoxLayout()
+        self.typeLayout = QHBoxLayout()
         self.typeLayout.addWidget(self.typeBtn)
         self.typeLayout.addLayout(self.selectLayout)
         if(dso.chnum==4):
             self.typeLayout.addLayout(self.selectLayout2)
 
         #Save/Load/Quit button
-        self.saveBtn = QtWidgets.QPushButton('Save')
+        self.saveBtn = QPushButton('Save')
         self.saveBtn.setFixedSize(100, 50)
-        self.saveMenu = QtWidgets.QMenu(self)
+        self.saveMenu = QMenu(self)
         self.csvAction = self.saveMenu.addAction("&As CSV File")
         self.pictAction = self.saveMenu.addAction("&As PNG File")
         self.saveBtn.setMenu(self.saveMenu)
@@ -199,42 +211,39 @@ class Window(QtWidgets.QWidget):
 #        self.connect(self.csvAction, QtCore.SIGNAL("triggered()"), self.saveCsvAction)
 #        self.connect(self.pictAction, QtCore.SIGNAL("triggered()"), self.savePngAction)
 
-        self.loadBtn = QtWidgets.QPushButton('Load')
+        self.loadBtn = QPushButton('Load')
         self.loadBtn.setToolTip("Load CHx's raw data from file(*.csv, *.lsf).")
         self.loadBtn.setFixedSize(100, 50)
         self.loadBtn.clicked.connect(self.loadAction)
 
-        self.quitBtn = QtWidgets.QPushButton('Quit')
+        self.quitBtn = QPushButton('Quit')
         self.quitBtn.setFixedSize(100, 50)
         self.quitBtn.clicked.connect(self.quitAction)
 
         # set the layout
-        self.waveLayout = QtWidgets.QHBoxLayout()
+        self.waveLayout = QHBoxLayout()
         self.waveLayout.addWidget(self.canvas)
 
-        self.wave_box=QtWidgets.QVBoxLayout()
+        self.wave_box=QVBoxLayout()
         self.wave_box.addLayout(self.waveLayout)
 
-        self.wavectrlLayout = QtWidgets.QHBoxLayout()
+        self.wavectrlLayout = QHBoxLayout()
         self.wavectrlLayout.addWidget(self.zoomBtn)
         self.wavectrlLayout.addWidget(self.panBtn)
         self.wavectrlLayout.addWidget(self.homeBtn)
         self.wavectrlLayout.addWidget(self.captureBtn)
         self.wavectrlLayout.addWidget(self.contBtn)
 
-        self.saveloadLayout = QtWidgets.QHBoxLayout()
+        self.saveloadLayout = QHBoxLayout()
         self.saveloadLayout.addWidget(self.saveBtn)
         self.saveloadLayout.addWidget(self.loadBtn)
         self.saveloadLayout.addWidget(self.quitBtn)
 
-        self.ctrl_box=QtWidgets.QHBoxLayout()
+        self.ctrl_box=QHBoxLayout()
         self.ctrl_box.addLayout(self.typeLayout)
         self.ctrl_box.addLayout(self.saveloadLayout)
 
-        print(119)
-
-
-        main_box=QtWidgets.QVBoxLayout()
+        main_box=QVBoxLayout()
         main_box.addLayout(self.wave_box)         #Waveform area.
         main_box.addLayout(self.wavectrlLayout)   #Zoom In/Out...
         main_box.addLayout(self.ctrl_box)         #Save/Load/Quit
@@ -258,7 +267,7 @@ class Window(QtWidgets.QWidget):
 
     def saveCsvAction(self):
         if(self.typeFlag==True): #Save raw data to csv file.
-            file_name=QtWidgets.QFileDialog.getSaveFileName(self, "Save as", '', "Fast CSV File(*.CSV)")[0]
+            file_name=QFileDialog.getSaveFileName(self, "Save as", '', "Fast CSV File(*.CSV)")[0]
             num=len(dso.ch_list)
             #print num
             for ch in range(num):
@@ -313,7 +322,7 @@ class Window(QtWidgets.QWidget):
 
     def savePngAction(self):
         #Save figure to png file.
-        file_name=QtWidgets.QFileDialog.getSaveFileName(self, "Save as", '', "PNG File(*.png)")[0]
+        file_name=QFileDialog.getSaveFileName(self, "Save as", '', "PNG File(*.png)")[0]
         if(file_name==''):
             return
         if(self.typeFlag==True): #Save raw data waveform as png file.
@@ -328,7 +337,7 @@ class Window(QtWidgets.QWidget):
 
     def loadAction(self):
         dso.ch_list=[]
-        full_path_name=QtWidgets.QFileDialog.getOpenFileName(self,self.tr("Open File"),".","CSV/LSF files (*.csv *.lsf);;All files (*.*)")
+        full_path_name=QFileDialog.getOpenFileName(self,self.tr("Open File"),".","CSV/LSF files (*.csv *.lsf);;All files (*.*)")
         sFileName=unicode(full_path_name).split(',')[0][3:-1] #For PySide
         print (sFileName)
         if(len(sFileName)<=0):
@@ -505,9 +514,10 @@ if __name__ == '__main__':
     #Connecting to a DSO.
     dso=dso1kb.Dso(port)
 
-    app = QtWidgets.QApplication(sys.argv)
+    app = QApplication(sys.argv)
 
     main = Window()
 
     main.show()
+    print ('after show')
     sys.exit(app.exec_())
