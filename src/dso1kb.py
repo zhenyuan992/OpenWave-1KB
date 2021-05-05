@@ -52,6 +52,12 @@ sModelList=[['GDS-1072B','DCS-1072B','IDS-1072B','GDS-71072B','GDS-1072R','DSO-1
              'GDS-1074B','DCS-1074B','IDS-1074B','GDS-71074B','GDS-1074R','DSO-1072D',
              'GDS-1104B','DCS-1104B','IDS-1104B','GDS-71104B','GDS-1104R','DSO-1102D']]
 
+sModelTranspose = [ 'GDS-1072B','DCS-1072B','IDS-1072B','GDS-71072B','GDS-1072R','DSO-1072D',
+                    'GDS-1102B','DCS-1102B','IDS-1102B','GDS-71102B','GDS-1102R','DSO-1102D',
+                    'GDS-1054B','DCS-1054B','IDS-1054B','GDS-71054B','GDS-1054R',
+                    'GDS-1074B','DCS-1074B','IDS-1074B','GDS-71074B','GDS-1074R','DSO-1072D',
+                    'GDS-1104B','DCS-1104B','IDS-1104B','GDS-71104B','GDS-1104R','DSO-1102D']
+
 def generate_lut():
     global lu_table
     num=65536
@@ -65,6 +71,7 @@ def generate_lut():
 
 class Dso:
     def __init__(self, interface):
+        self.model_name='N/A'
         if(os.name=='posix'): #unix
             if(os.uname()[1]=='raspberrypi'):
                 self.osname='pi'
@@ -97,6 +104,7 @@ class Dso:
         self.hpos=[[], [], [], []]
         self.ch_list=[]
         self.info=[[], [], [], []]
+        self.sModelTranspose=sModelTranspose
         generate_lut()
 
     def connect(self, str):
@@ -123,7 +131,8 @@ class Dso:
         self.readBytes=self.IO.readBytes
         self.closeIO=self.IO.closeIO
         self.write('*IDN?\n')
-        model_name=self.read().decode().split(',')[1]
+        self.model_name=self.read().decode().split(',')[1]
+        model_name = self.model_name
         print ('%s connected to %s successfully!'%(model_name, str))
         if(self.osname=='win10') and ('COM' in str):
             self.write(':USBDelay ON\n')  #Prevent data loss on Win 10.
@@ -208,7 +217,8 @@ class Dso:
         else:  #0 for PNG decode.
             self.im=Image.open(io.BytesIO(inBuffer[self.headerlen:-1]))
             print ('PngDecode()')
-        if(self.osname=='pi'):
+        model_name = self.model_name
+        if(self.osname=='pi' and any(self.model_name == a for a in sModelTranspose)) :
             self.im=self.im.transpose(Image.FLIP_TOP_BOTTOM) #For raspberry pi only.
 
     def getRawData(self, header_on,  ch): #Used to get waveform's raw data.

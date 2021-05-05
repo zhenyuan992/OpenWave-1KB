@@ -65,6 +65,7 @@ import os, sys, time
 from gw_com_1kb import com
 from gw_lan import lan
 import dso1kb
+import re
 
 __version__ = "1.01" #OpenWave-1KB software version.
 
@@ -204,12 +205,10 @@ class Window(QWidget):
         self.saveBtn = QPushButton('Save')
         self.saveBtn.setFixedSize(100, 50)
         self.saveMenu = QMenu(self)
-        self.csvAction = self.saveMenu.addAction("&As CSV File")
-        self.pictAction = self.saveMenu.addAction("&As PNG File")
+        self.csvAction = self.saveMenu.addAction("&As CSV File",self.SaveActionClicked)
+        self.pictAction = self.saveMenu.addAction("&As PNG File",self.SaveActionClicked)
         self.saveBtn.setMenu(self.saveMenu)
         self.saveBtn.setToolTip("Save waveform to CSV file or PNG file.")
-#        self.connect(self.csvAction, QtCore.SIGNAL("triggered()"), self.saveCsvAction)
-#        self.connect(self.pictAction, QtCore.SIGNAL("triggered()"), self.savePngAction)
 
         self.loadBtn = QPushButton('Load')
         self.loadBtn.setToolTip("Load CHx's raw data from file(*.csv, *.lsf).")
@@ -248,6 +247,11 @@ class Window(QWidget):
         main_box.addLayout(self.wavectrlLayout)   #Zoom In/Out...
         main_box.addLayout(self.ctrl_box)         #Save/Load/Quit
         self.setLayout(main_box)
+        
+    def SaveActionClicked(self):
+        action = self.sender()
+        if (action.text() == '&As PNG File') :
+            self.savePngAction()
 
     def typeAction(self):
         if(self.typeFlag==True):
@@ -323,12 +327,15 @@ class Window(QWidget):
     def savePngAction(self):
         #Save figure to png file.
         file_name=QFileDialog.getSaveFileName(self, "Save as", '', "PNG File(*.png)")[0]
-        if(file_name==''):
+        if re.search(r'\.\w{3}$',file_name) == None : 
+                file_name = file_name + '.png'
+        elif(file_name==''):
             return
         if(self.typeFlag==True): #Save raw data waveform as png file.
             main.figure.savefig(file_name)
         else:  #Save figure to png file.
-            if(dso.osname=='pi'): #For raspberry pi only.
+            model_name = dso.model_name
+            if(dso.osname=='pi') and any(model_name == a for a in dso.sModelTranspose) : #For raspberry pi only.
                 img=dso.im.transpose(Image.FLIP_TOP_BOTTOM)
                 img.save(file_name)
             else:
@@ -338,7 +345,9 @@ class Window(QWidget):
     def loadAction(self):
         dso.ch_list=[]
         full_path_name=QFileDialog.getOpenFileName(self,self.tr("Open File"),".","CSV/LSF files (*.csv *.lsf);;All files (*.*)")
-        sFileName=unicode(full_path_name).split(',')[0][3:-1] #For PySide
+        print (full_path_name)
+        #sFileName=unicode(full_path_name).split(',')[0][3:-1] #For PySide
+        sFileName=(full_path_name).split(',')[0][3:-1] #For PySide
         print (sFileName)
         if(len(sFileName)<=0):
             return
@@ -412,7 +421,6 @@ class Window(QWidget):
             dso.getBlockData()
             dso.ImageDecode(img_type)
             self.showImage()
-            plt.tight_layout(True)
             self.canvas.draw()
             print('Image is ready!')
 
