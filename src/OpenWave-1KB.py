@@ -252,6 +252,8 @@ class Window(QWidget):
         action = self.sender()
         if (action.text() == '&As PNG File') :
             self.savePngAction()
+        elif (action.text() == '&As CSV File') :
+            self.saveCsvAction()
 
     def typeAction(self):
         if(self.typeFlag==True):
@@ -272,13 +274,17 @@ class Window(QWidget):
     def saveCsvAction(self):
         if(self.typeFlag==True): #Save raw data to csv file.
             file_name=QFileDialog.getSaveFileName(self, "Save as", '', "Fast CSV File(*.CSV)")[0]
+            if re.search(r'\.\w{3}$',file_name) == None : 
+                file_name = file_name + '.csv'
+            elif(file_name==''):
+                return
             num=len(dso.ch_list)
             #print num
             for ch in range(num):
                 if(dso.info[ch]==[]):
                     print('Failed to save data, raw data information is required!')
                     return
-            f = open(file_name, 'wb')
+            f = open(file_name, 'w+')
             item=len(dso.info[0])
             #Write file header.
             f.write('%s,\r\n' % dso.info[0][0])
@@ -323,7 +329,7 @@ class Window(QWidget):
                     print('%3d %% Saved\r'%percent),
                     percent+=10
             f.close()
-
+            return
     def savePngAction(self):
         #Save figure to png file.
         file_name=QFileDialog.getSaveFileName(self, "Save as", '', "PNG File(*.png)")[0]
@@ -345,10 +351,9 @@ class Window(QWidget):
     def loadAction(self):
         dso.ch_list=[]
         full_path_name=QFileDialog.getOpenFileName(self,self.tr("Open File"),".","CSV/LSF files (*.csv *.lsf);;All files (*.*)")
-        print (full_path_name)
-        #sFileName=unicode(full_path_name).split(',')[0][3:-1] #For PySide
-        sFileName=(full_path_name).split(',')[0][3:-1] #For PySide
-        print (sFileName)
+        p=re.compile('^\(\'(.*)\'\,')
+        m=p.match(str(full_path_name))
+        sFileName=m.group(1)
         if(len(sFileName)<=0):
             return
         if os.path.exists(sFileName):
@@ -527,5 +532,5 @@ if __name__ == '__main__':
     main = Window()
 
     main.show()
-    print ('after show')
+
     sys.exit(app.exec_())

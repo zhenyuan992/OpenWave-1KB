@@ -260,7 +260,7 @@ class Dso:
         self.points_num=len(inBuffer[self.headerlen:-1])//2   #Calculate sample points length.
         self.iWave[index] = unpack('>%sh' % self.points_num, inBuffer[self.headerlen:-1])
         del inBuffer
-        return index #Return the buffer index.
+        return index #Return the buffer index
 
     def checkAcqState(self,  ch):
         str_stat=":ACQ%d:STAT?\n" % ch
@@ -305,7 +305,7 @@ class Dso:
             self.dataType='lsf'
         else:
             return -1
-        f = open(fileName, 'rb')
+        f = open(fileName, 'r')
         info=[]
         #Read file header.
         if(self.dataType=='csv'):
@@ -315,7 +315,7 @@ class Dso:
                 f.close()
                 return -1
             count=info[5].count('CH')  #Check channel number in file.
-            wave=f.read().decode().splitlines() #Read raw data from file.
+            wave=f.read().splitlines() #Read raw data from file.
             self.points_num=len(wave)
             if(info[23].split(',')[1]=='Fast'):
                 self.dataMode='Fast'
