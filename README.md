@@ -93,41 +93,45 @@ Development Tools
 ------------
 - **Packages:**
    If you want to modify the source code and run the program by yourself. You have to install the development tools and packages as follows:
-   * Python 2.7.9
-   * PySerial 2.7
-   * Matplotlib 1.3.1
-   * Numpy 1.8.0
-   * PIL 1.1.7
-   * PySide 1.2.1
-   * dateutil 2.2
-   * pyparsing 2.0.1
-   * six 1.4.1
-
- *OpenWave-1KB.exe is developed under Windows 7 32 bits environment, and all the packages are Windows 32bits version.*
-
-- **Ubuntu Linux:**
-   OpenWave-1KB is also tested under Ubuntu 14.04.4 (32 bits) with the same version of the packages listed above.  And the following package and libraries are required:
-   * nose-1.3.4
-   * qt4-qmake
-   * libqt4-dev
+   * Python 3.7
+   * PySerial 3.5
+   * Matplotlib 3.4.1
+   * Numpy 1.20.2
+   * python-dateutil 2.8.1
+   * pyparsing 2.4.7
+   * six 1.12.0
 
 - **Raspbian Linux:**
-   OpenWave-1KB is also tested on Raspberry Pi 2 with the following package and libraries:
-   * python-matplotlib
-   * python-numpy
-   * python-scipy
-   * libatlas-base-dev
-   * gfortran
-   * python-pip
-   * scipy
-   * Pillow
-   * python-pyside
-   * python-serial
-   * pyserial
+   OpenWave-1KB tested at Linux raspberrypi 5.10.17-v7+ #1403 
+   * python3-pyqt5
+   * python3-nose*
+   * python3-pyside
+   * qt5-qmake
+   * libqt5*
 
+- **Windows 10**
+  Python3.9.5
+
+   * matplotlib 3.4.1
+   * pyparsing 2.4.7
+   * numpy 1.20.2
+   * python-dateutil 2.8.1
+   * six 1.16.0
+   * PyQt5
+   * serial 0.0.97
+   * pyyaml 5.4.1
+   * PySerial 3.5
+
+   * PyInstaller
+   * tornado 6.1
+
+ *OpenWave-1KB.exe is developed under Windows 7 32 bits environment, and all the packages are Windows 32bits version.*
+~~~bash
+py.exe -OO -m PyInstaller -i openwave.ico --onefile --windowed ./OpenWave-1KB.py
+~~~
 
 - **Python IDE:**
-   If you need a Python IDE tool, Eric4 4.5.19  is recommended:
+   geany:
 
 
 - **Executable File:**
