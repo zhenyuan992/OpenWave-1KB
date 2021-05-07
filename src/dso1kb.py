@@ -151,7 +151,7 @@ class Dso:
             return
 
         if not os.path.exists('port.config'):
-            f = open('port.config', 'wb')
+            f = open('port.config', 'w+')
             f.write(str)
             f.close()
 

@@ -46,8 +46,6 @@ Author: Kevin Meng
 import matplotlib as mpl
 mpl.use("Qt5Agg")
 import matplotlib.pyplot as plt
-#mpl.rcParams['backend.qt4'] = 'PySide'  #Used for PySide.
-#mpl.rcParams['agg.path.chunksize'] = 100000 #For big data.
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 from mpl_toolkits.axes_grid1 import host_subplot
@@ -287,18 +285,27 @@ class Window(QWidget):
             f = open(file_name, 'w+')
             item=len(dso.info[0])
             #Write file header.
-            f.write('%s,\r\n' % dso.info[0][0])
+            if any(dso.osname == a for a in ['win','win10']) : 
+                f.write('%s,\n' % dso.info[0][0])
+            else :
+                f.write('%s,\r\n' % dso.info[0][0])
             for x in range(1,  23):
                 str=''
                 for ch in range(num):
                     str+=('%s,' % dso.info[ch][x])
-                str+='\r\n'
+                if any(dso.osname == a for a in ['win','win10']) : 
+                    str+='\n'
+                else :
+                    str+='\r\n'
                 f.write(str)
             #Write Fast CSV mode only.
             str=''
             for ch in range(num):
                 str+='Mode,Fast,'
-            str+='\r\n'
+            if any(dso.osname == a for a in ['win','win10']) : 
+                str+='\n'
+            else :
+                str+='\r\n'
             f.write(str)
 
             str=''
@@ -307,7 +314,10 @@ class Window(QWidget):
             else:
                 for ch in range(num):
                     str+=('%s,,' % dso.info[ch][24])
-            str+='\r\n'
+            if any(dso.osname == a for a in ['win','win10']) : 
+                str+='\n'
+            else :
+                str+='\r\n'
             f.write(str)
             #Write raw data.
             item=len(dso.iWave[0])
@@ -322,7 +332,10 @@ class Window(QWidget):
                 else:
                     for ch in range(num):
                         str+=('%s, ,' % dso.iWave[ch][x])
-                str+='\r\n'
+                if any(dso.osname == a for a in ['win','win10']) : 
+                    str+='\n'
+                else :
+                    str+='\r\n'
                 f.write(str)
                 if(x==n_tenth):
                     n_tenth+=tenth
