@@ -11,9 +11,6 @@ OpenWave-1KB
 
 This icon is copyright by Good Will Instrument Co., Ltd all rights reserved.
 
-
-
-
 OpenWave-1KB is an open-source project. It's a simple python program that can get image or raw data from digital storage oscilloscope(GDS-1000B/DCS-1000B/IDS-1000B/DSO-1000D series) via USB port or Ethernet.
 
 Users can execute the same source code on Windows, Linux(Ubuntu) and Raspbian(on Raspberry Pi 2) operating system without changing a word. By using this version, users can also create multiple DSO connections at the same time.
@@ -25,18 +22,28 @@ Equipment
 ------------
 You have to get a new digital storage oscilloscope - GDS-1000B, GDS-1000R(GOOD WILL INSTRUMENT)/DCS-1000B(TEXIO)/IDS-1000B(RS PRO)/DSO-1000D(CONRAD) and a PC or NB with MS Windows OS.
 
+GW Instek Oscillators
+---------------------
+2 channels:
 
+* **GDS-1072B,DCS-1072B,IDS-1072B,GDS-71072B,GDS-1072R,DSO-1072D,**
+* **GDS-1102B,DCS-1102B,IDS-1102B,GDS-71102B,GDS-1102R,DSO-1102D,**
+* **GDS-1202B**
+
+4 channels:
+
+* **GDS-1054B,DCS-1054B,IDS-1054B,GDS-71054B,GDS-1054R,**
+* **GDS-1074B,DCS-1074B,IDS-1074B,GDS-71074B,GDS-1074R,DSO-1072D,**
+* **GDS-1104B,DCS-1104B,IDS-1104B,GDS-71104B,GDS-1104R,DSO-1102D**
 
 
 Environment
 ------------
-Currently OpenWave-1KB may be executed on Windows XP/7/8 32 or 64 bits OS. We also tested the program on Win 10, the connection is good but can't guarantee to be 100% no problem on different platforms. You have to download and install the USB driver(dso_vpo V1.08) from [www.gwinstek.com](http://www.gwinstek.com) or [here](/dso_vpo_v108.zip) when the first connection with GDS-1000B.
+Currently OpenWave-1KB may be executed on Windows XP/7/8/10 32 or 64 bits OS. USB Driver you can find at [www.gwinstek.com](http://www.gwinstek.com).
 
 Please unzip the [OpenWave-1KB V1.01.zip](/OpenWave-1KB_V1.01.zip) and find the OpenWave-1KB.exe in the folder. OpenWave-1KB.exe can be executed directly without installation. Please be noticed that the path name and folder name can't be double-byte characters.
 
-The OpenWave-1KB source code can also be executed on Ubuntu 32 bits Linux OS or Raspbian OS(on Raspberry Pi 2). The USB driver is not required in this environment.
-
-
+The OpenWave-1KB source code can also be executed on Ubuntu 32 bits Linux OS or Raspbian OS(on Raspberry Pi 2,3,4). The USB driver is not required in this environment.
 
 Command Line Execution
 ------------
@@ -82,6 +89,8 @@ Command Line Execution
 2.  *If you are using Linux, please add your username to group ```dialout``` to get proper privilege level for device accessing.*
     ```
     user@Ubuntu:~/workspace_python/OpenWave-1KB V1.01$ $ sudo adduser xxxx dialout     #xxxx is your username
+    sudo usermod -a -G dialout xxxx
+    sudo chmod a+rw /dev/ttyACM0
     ```
 
 3.  *You can also create a `port.config` file containing `COM5` or `ttyACM1` or `172.16.5.11:3000`(as an example) in the folder for next time quick connection.*
@@ -101,7 +110,7 @@ Development Tools
    * pyparsing 2.4.7
    * six 1.12.0
 
-- **Raspbian Linux:**
+- **Raspbian, Ubuntu Linux:**
    OpenWave-1KB tested at Linux raspberrypi 5.10.17-v7+ #1403 
    * python3-pyqt5
    * python3-nose*
@@ -111,7 +120,6 @@ Development Tools
 
 - **Windows 10**
   Python3.9.5
-
    * matplotlib 3.4.1
    * pyparsing 2.4.7
    * numpy 1.20.2
@@ -120,15 +128,7 @@ Development Tools
    * PyQt5
    * serial 0.0.97
    * pyyaml 5.4.1
-   * PySerial 3.5
-
-   * PyInstaller
-   * tornado 6.1
-
- *OpenWave-1KB.exe is developed under Windows 7 32 bits environment, and all the packages are Windows 32bits version.*
-~~~bash
-py.exe -OO -m PyInstaller -i openwave.ico --onefile --windowed ./OpenWave-1KB.py
-~~~
+   * PySerial 3.5 
 
 - **Python IDE:**
    geany:
@@ -137,9 +137,12 @@ py.exe -OO -m PyInstaller -i openwave.ico --onefile --windowed ./OpenWave-1KB.py
 - **Executable File:**
    If you want to convert python program into stand-alone executables under Windows. The following packages are required:
    * PyInstaller 2.1
-   * pywin32 218.4
-
-
+   * tornado 6.1
+   
+   *OpenWave-1KB.exe is developed under Windows 10 32 bits environment, and all the packages are Windows 32bits version.*
+~~~bash
+py.exe -OO -m PyInstaller -i openwave.ico --onefile --windowed ./OpenWave-1KB.py
+~~~
 
 
 Screenshot
