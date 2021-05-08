@@ -2,3 +2,8 @@ matplotlib
 PyQt5
 Pillow
 PySerial
+Serial
+PyInstaller
+Tornado
+numpy
+yparsing
