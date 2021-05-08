@@ -6,4 +6,5 @@ Serial
 PyInstaller
 Tornado
 numpy
-yparsing
+pyparsing
+python-dateutil
