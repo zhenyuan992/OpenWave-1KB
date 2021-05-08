@@ -136,14 +136,20 @@ Development Tools
 
 - **Executable File:**
    If you want to convert python program into stand-alone executables under Windows. The following packages are required:
-   * PyInstaller 2.1
+   * PyInstaller 4.3
    * tornado 6.1
    
    *OpenWave-1KB.exe is developed under Windows 10 32 bits environment, and all the packages are Windows 32bits version.*
 ~~~bash
-py.exe -OO -m PyInstaller -i openwave.ico --onefile --windowed ./OpenWave-1KB.py
-~~~
+# compile with silent STDOUT
+py.exe -O -m PyInstaller -i openwave.ico --onefile --windowed ./OpenWave-1KB.py
 
+# normal compile (default)
+py.exe -O -m PyInstaller -i openwave.ico --onefile ./OpenWave-1KB.py
+
+# when Debug is needed
+py.exe -O -m PyInstaller -D -i openwave.ico --onefile ./OpenWave-1KB.py
+~~~
 
 Screenshot
 ------------
