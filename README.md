@@ -11,7 +11,7 @@ OpenWave-1KB
 
 This icon is copyright by Good Will Instrument Co., Ltd all rights reserved.
 
-OpenWave-1KB is an open-source project. It's a simple python program that can get image or raw data from digital storage oscilloscope(GDS-1000B/DCS-1000B/IDS-1000B/DSO-1000D series) via USB port or Ethernet.
+OpenWave-1KB is an open-source project. It's a simple python program that can get image or raw data from digital storage oscilloscope (GDS-1000B/DCS-1000B/IDS-1000B/DSO-1000D series) via USB port or Ethernet.
 
 Users can execute the same source code on Windows, Linux(Ubuntu) and Raspbian(on Raspberry Pi 2) operating system without changing a word. By using this version, users can also create multiple DSO connections at the same time.
 
@@ -39,9 +39,9 @@ GW Instek Oscillators
 
 Environment
 ------------
-Currently OpenWave-1KB may be executed on Windows XP/7/8/10 32 or 64 bits OS. USB Driver you can find at [www.gwinstek.com](http://www.gwinstek.com).
+Currently OpenWave-1KB may be executed on Windows XP/7/8/10 32 or 64 bits OS. USB Driver can be found at [www.gwinstek.com](http://www.gwinstek.com).
 
-Please unzip the [OpenWave-1KB V1.01.zip](/OpenWave-1KB_V1.01.zip) and find the OpenWave-1KB.exe in the folder. OpenWave-1KB.exe can be executed directly without installation. Please be noticed that the path name and folder name can't be double-byte characters.
+For windows, OpenWave-1KB.exe can be executed directly without installation. Please note that the path name and folder name cannot be double-byte characters.
 
 The OpenWave-1KB source code can also be executed on Ubuntu 32 bits Linux OS or Raspbian OS(on Raspberry Pi 2,3,4). The USB driver is not required in this environment.
 
