@@ -56,7 +56,7 @@ from gw_lan import lan
 import dso1kb
 import re
 
-__version__ = "1.02" #OpenWave-1KB software version.
+__version__ = "1.03" #OpenWave-1KB software version.
 
 def checkInterface(str):
     if str!= '':
@@ -145,6 +145,17 @@ class Window(QWidget):
         self.contTimer=QtCore.QTimer(self)
         self.contTimer.timeout.connect(self.captureAction)
         #self.contTimer.timeout.connect(self.handleCapture)
+        
+        # Continuous capture2
+        self.contBtn2 = QPushButton('Cont2')
+        self.contBtn2.setToolTip("Toggle continuous mode.")
+        self.contBtn2.setFixedSize(100, 50)
+        self.contFlag=False #Initial state -> do not capture continuosly
+        self.contBtn2.setCheckable(True)
+        self.contBtn2.setChecked(False)
+        self.contBtn2.clicked.connect(self.contAction2)
+        self.contTimer2=QtCore.QTimer(self)
+        self.contTimer2.timeout.connect(self.captureAction)
 
         #Type: Raw Data/Image
         self.typeBtn = QPushButton('Raw Data')
@@ -198,6 +209,12 @@ class Window(QWidget):
         self.pictAction = self.saveMenu.addAction("&As PNG File",self.SaveActionClicked)
         self.saveBtn.setMenu(self.saveMenu)
         self.saveBtn.setToolTip("Save waveform to CSV file or PNG file.")
+        
+        #record button
+        self.recordBtn = QPushButton('Record')
+        self.recordBtn.setFixedSize(100, 50)
+        self.recordBtn.clicked.connect(self.recordCsvAction)
+        self.recordBtn.setToolTip("recordBtn waveform to CSV file.")
 
         self.loadBtn = QPushButton('Load')
         self.loadBtn.setToolTip("Load CHx's raw data from file(*.csv, *.lsf).")
@@ -221,9 +238,11 @@ class Window(QWidget):
         self.wavectrlLayout.addWidget(self.homeBtn)
         self.wavectrlLayout.addWidget(self.captureBtn)
         self.wavectrlLayout.addWidget(self.contBtn)
+        self.wavectrlLayout.addWidget(self.contBtn2)
 
         self.saveloadLayout = QHBoxLayout()
         self.saveloadLayout.addWidget(self.saveBtn)
+        self.saveloadLayout.addWidget(self.recordBtn)
         self.saveloadLayout.addWidget(self.loadBtn)
         self.saveloadLayout.addWidget(self.quitBtn)
 
@@ -259,7 +278,19 @@ class Window(QWidget):
         if(dso.chnum==4):
             self.ch3checkBox.setEnabled(self.typeFlag)
             self.ch4checkBox.setEnabled(self.typeFlag)
-
+    def recordCsvAction(self):
+        if(self.typeFlag==True): #Save raw data to csv file.
+            file_name=QFileDialog.getSaveFileName(self, "Save as", 'temp', "Fast CSV File(*.CSV)")[0]
+            if re.search(r'\.\w{3}$',file_name) == None : 
+                file_name = file_name
+            elif(file_name==''):
+                return
+            for file_index in range(1050):
+                if file_index %100==0:
+                    print(file_index)
+                self.captureAction_FetchData()
+                self.save_file(file_name[:-4]+f"{file_index:05d}"+".CSV")
+            print("done long capture")
     def saveCsvAction(self):
         if(self.typeFlag==True): #Save raw data to csv file.
             file_name=QFileDialog.getSaveFileName(self, "Save as", '', "Fast CSV File(*.CSV)")[0]
@@ -267,6 +298,9 @@ class Window(QWidget):
                 file_name = file_name + '.csv'
             elif(file_name==''):
                 return
+            self.save_file(file_name)
+            
+    def save_file(self,file_name):
             num=len(dso.ch_list)
             #print num
             for ch in range(num):
@@ -330,10 +364,10 @@ class Window(QWidget):
                 f.write(str)
                 if(x==n_tenth):
                     n_tenth+=tenth
-                    print('%3d %% Saved\r'%percent),
+                    # print('%3d %% Saved\r'%percent),
                     percent+=10
+            #print('%3d %% Saved\r'%percent)
             f.close()
-            return
     def savePngAction(self):
         #Save figure to png file.
         file_name=QFileDialog.getSaveFileName(self, "Save as", '', "PNG File(*.png)")[0]
@@ -376,7 +410,7 @@ class Window(QWidget):
         if(dso.connection_status==1):
             dso.closeIO()
         self.close()
-
+        
     def contAction(self):
         print("contAction")
         if(self.contFlag==True):
@@ -385,10 +419,45 @@ class Window(QWidget):
             self.contFlag=True
         self.contBtn.setChecked(self.contFlag)
         if self.contFlag:
-            self.contTimer.start(200) # sample every xxx milliseconds
+            self.contTimer.start(5) # sample every xxx milliseconds
         else:
             self.contTimer.stop()
-
+    def contAction2(self):
+        print("contAction2")
+        if(self.contFlag==True):
+            self.contFlag=False
+        else:
+            self.contFlag=True
+        self.contBtn2.setChecked(self.contFlag)
+        if self.contFlag:
+            self.contTimer.start(5) # sample every xxx milliseconds
+        else:
+            self.contTimer.stop()
+    def captureAction_FetchData(self):
+        dso.iWave=[[], [], [], []]
+        dso.ch_list=[]
+        if(self.typeFlag==True): #Get raw data.
+            draw_flag=False
+            #Turn on the selected channels.
+            if((self.ch1checkBox.isChecked()==True) and (dso.isChannelOn(1)==False)):
+                dso.write(":CHAN1:DISP ON\n")           #Set CH1 on.
+            if((self.ch2checkBox.isChecked()==True) and (dso.isChannelOn(2)==False)):
+                dso.write(":CHAN2:DISP ON\n")           #Set CH2 on.
+            if(dso.chnum==4):
+                if((self.ch3checkBox.isChecked()==True) and (dso.isChannelOn(3)==False)):
+                    dso.write(":CHAN3:DISP ON\n")       #Set CH3 on.
+                if((self.ch4checkBox.isChecked()==True) and (dso.isChannelOn(4)==False)):
+                    dso.write(":CHAN4:DISP ON\n")       #Set CH4 on.
+            #Get all the selected channel's raw datas.
+            if(self.ch1checkBox.isChecked()==True):
+                dso.getRawData(True, 1)              #Read CH1's raw data from DSO (including header).
+            if(self.ch2checkBox.isChecked()==True):
+                dso.getRawData(True, 2)              #Read CH2's raw data from DSO (including header).
+            if(dso.chnum==4):
+                if(self.ch3checkBox.isChecked()==True):
+                    dso.getRawData(True, 3)          #Read CH3's raw data from DSO (including header).
+                if(self.ch4checkBox.isChecked()==True):
+                    dso.getRawData(True, 4)          #Read CH4's raw data from DSO (including header).
     def captureAction(self):
         dso.iWave=[[], [], [], []]
         dso.ch_list=[]

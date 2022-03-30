@@ -161,11 +161,11 @@ class Dso:
         length=len(inBuffer)
         self.headerlen = 2 + int(inBuffer[1:2].decode())
         pkg_length = int(inBuffer[2:self.headerlen]) + self.headerlen + 1 #Block #48000[..8000bytes raw data...]<LF>
-        print ("Data transferring...  ")
+        #zy print ("Data transferring...  ")
 
         pkg_length=pkg_length-length
         while True:
-            print('%8d\r' %pkg_length),
+            #zy print('%8d\r' %pkg_length),
             if(pkg_length==0):
                 break
             else:
@@ -224,7 +224,7 @@ class Dso:
     def getRawData(self, header_on,  ch): #Used to get waveform's raw data.
         global inBuffer
         self.dataMode=[]
-        print('Waiting CH%d data... ' % ch)
+        # print('Waiting CH%d data... ' % ch)
         if(header_on==True):
             self.write(":HEAD ON\n")
         else:
@@ -417,7 +417,7 @@ class Dso:
         self.write(":CHAN%d:DISP?\n" % ch)
         onoff=self.read().decode()
         onoff=onoff[:-1]
-        print ('CH%s: %s'%(ch,onoff))
+        #zy print ('CH%s: %s'%(ch,onoff))
         if(onoff=='ON'):
             return True
         else:
