@@ -285,11 +285,13 @@ class Window(QWidget):
                 file_name = file_name
             elif(file_name==''):
                 return
-            for file_index in range(1050):
+            for file_index in range(5500):
                 if file_index %100==0:
                     print(file_index)
+                if file_index %500==0:
+                    print("increase voltage")
                 self.captureAction_FetchData()
-                self.save_file(file_name[:-4]+f"{file_index:05d}"+".CSV")
+                self.save_file(file_name[:-4]+f"{file_index:07d}"+".CSV")
             print("done long capture")
     def saveCsvAction(self):
         if(self.typeFlag==True): #Save raw data to csv file.
