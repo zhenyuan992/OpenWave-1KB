@@ -226,13 +226,23 @@ class Window(QWidget):
         self.quitBtn.clicked.connect(self.quitAction)
 
         # set the layout
-        self.recordLayout = QVBoxLayout()
-        self.recordLayout.addWidget(QLabel("No. of Frames"))
         self.framesLineEdit = QLineEdit()
         self.framesLineEdit.setPlaceholderText("100")
         self.framesLineEdit.setMaximumWidth(100)
-        self.recordLayout.addWidget(self.framesLineEdit)
-        self.recordLayout.addWidget(self.recordBtn)
+        hlayouts = []
+        for component in [QLabel("No. of Frames"),self.framesLineEdit,self.recordBtn]:
+            container = QWidget(self)
+            recordLayout_temp = QVBoxLayout(container)
+            hlayouts.append(container)
+            container.setStyleSheet("background-color:grey;")
+            recordLayout_temp.addWidget(component)
+        # self.recordLayout_temp.addWidget(QLabel("No. of Frames"))
+        # self.recordLayout_temp.addWidget(self.framesLineEdit)
+        # self.recordLayout_temp.addWidget(self.recordBtn)
+
+        self.recordLayout= QVBoxLayout()
+        for widget in hlayouts:
+            self.recordLayout.addWidget(widget)
 
         self.waveLayout = QHBoxLayout()
         self.waveLayout.addWidget(self.canvas)
