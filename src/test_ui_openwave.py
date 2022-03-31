@@ -227,15 +227,12 @@ class Window(QWidget):
 
         # set the layout
         self.recordLayout = QVBoxLayout()
-        #self.recordLayout.bot("border: 1px solid black; margin: 0px; padding: 0px;")
         self.recordLayout.addWidget(QLabel("No. of Frames"))
         self.framesLineEdit = QLineEdit()
         self.framesLineEdit.setPlaceholderText("100")
         self.framesLineEdit.setMaximumWidth(100)
         self.recordLayout.addWidget(self.framesLineEdit)
         self.recordLayout.addWidget(self.recordBtn)
-        #self.recordWidget = QFrame(self.zoomBtn)
-        #self.recordLayout.addWidget(self.recordWidget)
 
         self.waveLayout = QHBoxLayout()
         self.waveLayout.addWidget(self.canvas)
