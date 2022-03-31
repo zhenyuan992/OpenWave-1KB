@@ -214,7 +214,7 @@ class Window(QWidget):
         self.recordBtn = QPushButton('Record')
         self.recordBtn.setFixedSize(100, 50)
         self.recordBtn.clicked.connect(self.recordCsvAction)
-        self.recordBtn.setToolTip("recordBtn waveform to CSV file.")
+        self.recordBtn.setToolTip("Record multiple frames of waveform to many CSV files.")
 
         self.loadBtn = QPushButton('Load')
         self.loadBtn.setToolTip("Load CHx's raw data from file(*.csv, *.lsf).")
@@ -226,6 +226,14 @@ class Window(QWidget):
         self.quitBtn.clicked.connect(self.quitAction)
 
         # set the layout
+        self.recordLayout = QVBoxLayout()
+        self.recordLayout.addWidget(QLabel("No. of Frames"))
+        self.framesLineEdit = QLineEdit()
+        self.framesLineEdit.setPlaceholderText("100")
+        self.framesLineEdit.setMaximumWidth(100)
+        self.recordLayout.addWidget(self.framesLineEdit)
+        self.recordLayout.addWidget(self.recordBtn)
+
         self.waveLayout = QHBoxLayout()
         self.waveLayout.addWidget(self.canvas)
 
@@ -238,11 +246,10 @@ class Window(QWidget):
         self.wavectrlLayout.addWidget(self.homeBtn)
         self.wavectrlLayout.addWidget(self.captureBtn)
         self.wavectrlLayout.addWidget(self.contBtn)
-        self.wavectrlLayout.addWidget(self.contBtn2)
+        self.wavectrlLayout.addLayout(self.recordLayout)
 
         self.saveloadLayout = QHBoxLayout()
         self.saveloadLayout.addWidget(self.saveBtn)
-        self.saveloadLayout.addWidget(self.recordBtn)
         self.saveloadLayout.addWidget(self.loadBtn)
         self.saveloadLayout.addWidget(self.quitBtn)
 
