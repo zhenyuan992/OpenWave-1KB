@@ -4,4 +4,4 @@ dso_*.zip
 port.config
 venv
 .ipynb_checkpoints*
-proc_temp_data/*
+proc_temp_data*
