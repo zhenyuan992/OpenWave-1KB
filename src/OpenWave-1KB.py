@@ -226,10 +226,11 @@ class Window(QWidget):
         self.quitBtn.clicked.connect(self.quitAction)
 
         # set the layout
+        self.defaultLengthOfCapture = "10"
         self.recordLayout = QVBoxLayout()
         self.recordLayout.addWidget(QLabel("No. of Frames"))
         self.framesLineEdit = QLineEdit()
-        self.framesLineEdit.setPlaceholderText("100")
+        self.framesLineEdit.setPlaceholderText(self.defaultLengthOfCapture)
         self.framesLineEdit.setMaximumWidth(100)
         self.recordLayout.addWidget(self.framesLineEdit)
         self.recordLayout.addWidget(self.recordBtn)
@@ -292,11 +293,18 @@ class Window(QWidget):
                 file_name = file_name
             elif(file_name==''):
                 return
-            for file_index in range(5500):
+            numCaptures = int(self.defaultLengthOfCapture)
+            try:
+                numCaptures = int(self.framesLineEdit.text())
+            except ValueError :
+                print(f"error in value, proceeding with default {self.defaultLengthOfCapture} captures")
+                numCaptures = int(self.defaultLengthOfCapture)
+            assert numCaptures>0
+            for file_index in range(numCaptures):
                 if file_index %100==0:
                     print(file_index)
                 if file_index %500==0:
-                    print("increase voltage")
+                    print(file_index, "marker")
                 self.captureAction_FetchData()
                 self.save_file(file_name[:-4]+f"{file_index:07d}"+".CSV")
             print("done long capture")
