@@ -1,0 +1,33 @@
+- if things went wrong, what went wrong.
+- measure uncertainty
+- critical assessment of quantitative values
+- trying to simulate a thesis project
+- write it in plain text (not too many links)
+
+
+notes for pc5214
+
+energy of photons in ergs https://www.toppr.com/ask/en-sg/question/the-energy-of-a-photon-is-3-times-1012-ergs-itswavelength-in-nm-will-be/
+detectable by human eye 3 to 6*10^-10 ergs https://www.nature.com/articles/154013c0
+
+
+multimeter readings 
+1.6 1.4 micro amp
+voltage +2.448 -1.258
+
+generator:
+1.855vpp
+300mv offset
+
+https://mybinder.org/v2/gh/nus-sps/modules.sp2273.project.submissions/main
+
+determination of overvoltage:
+139.3V no counts
+139.4V counts
+
+dark counts
+1443v 11kHz
+1493v 18kHz
+1543v 30kHz
+1593v 38kHz
+1643v 45kHz
