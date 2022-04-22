@@ -302,9 +302,10 @@ class Window(QWidget):
             assert numCaptures>0
             for file_index in range(numCaptures):
                 if file_index %100==0:
-                    print(file_index)
-                if file_index %500==0:
-                    print(file_index, "marker")
+                    if file_index %500==0:
+                        print(file_index, "marker")
+                    else:
+                        print(file_index)
                 self.captureAction_FetchData()
                 self.save_file(file_name[:-4]+f"{file_index:07d}"+".CSV")
             print("done long capture")
