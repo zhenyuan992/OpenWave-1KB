@@ -67,7 +67,7 @@ def plot_scope_data(title,dataseq,headers,CH=1,ylim=False,save=""):
     plt.legend()
     plt.show() if len(save)==0 else plt.savefig(save)
             
-def subplot_scope_data(dataseq,headers,ax,CH=1,label="",alpha=0.3):
+def subplot_scope_data(dataseq,headers,ax,CH=1,label="",alpha=0.3,xscale=1):
     samplingperiod = headers[CH]["Sampling Period"]
-    ax.plot(np.arange(len(dataseq[CH]))*samplingperiod,getvoltage(dataseq[CH],headers[CH]),label=label,alpha=alpha)
+    ax.plot(np.arange(len(dataseq[CH]))*samplingperiod*xscale,getvoltage(dataseq[CH],headers[CH]),label=label,alpha=alpha)
     
