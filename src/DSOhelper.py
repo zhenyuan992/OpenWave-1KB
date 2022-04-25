@@ -7,7 +7,7 @@ helper functions for reading, parsing and plotting oscilloscope data
 written by yeo zhen yuan
 """
 
-def addsubfiglabels(axx,skip=0):
+def addsubfiglabels(axx,skip=0,loc='upper left'):
     """ add subfigure labels, starting from 'a' """
     try:
         len(axx)
@@ -15,7 +15,7 @@ def addsubfiglabels(axx,skip=0):
         return
     ascii_letters = 'abcdefghijklmnopqrstuvwxyz'*(len(axx.ravel())//26+1)
     for letter,ax in zip(ascii_letters[skip:],axx.ravel()):
-        at = AnchoredText(letter,frameon=True, loc='upper left')#prop=dict(size=15)
+        at = AnchoredText(letter,frameon=True, loc=loc)#prop=dict(size=15)
         at.patch.set_boxstyle("round,pad=0.,rounding_size=0.2")
         ax.add_artist(at)
 def get_oscilloscope_data(file,headers=True,raw=False):
