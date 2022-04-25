@@ -1,6 +1,6 @@
 import numpy as np
 from matplotlib import pyplot as plt
-
+from matplotlib.offsetbox import AnchoredText
 
 """
 helper functions for reading, parsing and plotting oscilloscope data
