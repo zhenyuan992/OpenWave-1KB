@@ -308,73 +308,73 @@ class Window(QWidget):
             self.save_file(file_name)
             
     def save_file(self,file_name):
-            num=len(dso.ch_list)
-            #print num
-            for ch in range(num):
-                if(dso.info[ch]==[]):
-                    print('Failed to save data, raw data information is required!')
-                    return
-            f = open(file_name, 'w+')
-            item=len(dso.info[0])
-            #Write file header.
-            if any(dso.osname == a for a in ['win','win10']) : 
-                f.write('%s,\n' % dso.info[0][0])
-            else :
-                f.write('%s,\r\n' % dso.info[0][0])
-            for x in range(1,  23):
-                str=''
-                for ch in range(num):
-                    str+=('%s,' % dso.info[ch][x])
-                if any(dso.osname == a for a in ['win','win10']) : 
-                    str+='\n'
-                else :
-                    str+='\r\n'
-                f.write(str)
-            #Write Fast CSV mode only.
+        num=len(dso.ch_list)
+        #print num
+        for ch in range(num):
+            if(dso.info[ch]==[]):
+                print('Failed to save data, raw data information is required!')
+                return
+        f = open(file_name, 'w+')
+        item=len(dso.info[0])
+        #Write file header.
+        if any(dso.osname == a for a in ['win','win10']) : 
+            f.write('%s,\n' % dso.info[0][0])
+        else :
+            f.write('%s,\r\n' % dso.info[0][0])
+        for x in range(1,  23):
             str=''
             for ch in range(num):
-                str+='Mode,Fast,'
+                str+=('%s,' % dso.info[ch][x])
             if any(dso.osname == a for a in ['win','win10']) : 
                 str+='\n'
             else :
                 str+='\r\n'
             f.write(str)
+        #Write Fast CSV mode only.
+        str=''
+        for ch in range(num):
+            str+='Mode,Fast,'
+        if any(dso.osname == a for a in ['win','win10']) : 
+            str+='\n'
+        else :
+            str+='\r\n'
+        f.write(str)
 
+        str=''
+        if(num==1):
+            str+=('%s,' % dso.info[0][24])
+        else:
+            for ch in range(num):
+                str+=('%s,,' % dso.info[ch][24])
+        if any(dso.osname == a for a in ['win','win10']) : 
+            str+='\n'
+        else :
+            str+='\r\n'
+        f.write(str)
+        #Write raw data.
+        item=len(dso.iWave[0])
+        #print item
+        tenth=int(item/10)
+        n_tenth=tenth-1
+        percent=10
+        for x in range(item):
             str=''
             if(num==1):
-                str+=('%s,' % dso.info[0][24])
+                str+=('%s,' % dso.iWave[0][x])
             else:
                 for ch in range(num):
-                    str+=('%s,,' % dso.info[ch][24])
+                    str+=('%s, ,' % dso.iWave[ch][x])
             if any(dso.osname == a for a in ['win','win10']) : 
                 str+='\n'
             else :
                 str+='\r\n'
             f.write(str)
-            #Write raw data.
-            item=len(dso.iWave[0])
-            #print item
-            tenth=int(item/10)
-            n_tenth=tenth-1
-            percent=10
-            for x in range(item):
-                str=''
-                if(num==1):
-                    str+=('%s,' % dso.iWave[0][x])
-                else:
-                    for ch in range(num):
-                        str+=('%s, ,' % dso.iWave[ch][x])
-                if any(dso.osname == a for a in ['win','win10']) : 
-                    str+='\n'
-                else :
-                    str+='\r\n'
-                f.write(str)
-                if(x==n_tenth):
-                    n_tenth+=tenth
-                    print('%3d %% Saved\r'%percent),
-                    percent+=10
-            f.close()
-            return
+            if(x==n_tenth):
+                n_tenth+=tenth
+                print('%3d %% Saved\r'%percent),
+                percent+=10
+        f.close()
+        return
     def savePngAction(self):
         #Save figure to png file.
         file_name=QFileDialog.getSaveFileName(self, "Save as", '', "PNG File(*.png)")[0]
