@@ -56,7 +56,7 @@ from gw_lan import lan
 import dso1kb
 import re
 
-__version__ = "1.02" #OpenWave-1KB software version.
+__version__ = "1.03" #OpenWave-1KB software version.
 
 def checkInterface(str):
     if str!= '':
@@ -145,7 +145,7 @@ class Window(QWidget):
         self.contTimer=QtCore.QTimer(self)
         self.contTimer.timeout.connect(self.captureAction)
         #self.contTimer.timeout.connect(self.handleCapture)
-
+        
         #Type: Raw Data/Image
         self.typeBtn = QPushButton('Raw Data')
         self.typeBtn.setToolTip("Switch to get raw data or image from DSO.")
@@ -198,6 +198,12 @@ class Window(QWidget):
         self.pictAction = self.saveMenu.addAction("&As PNG File",self.SaveActionClicked)
         self.saveBtn.setMenu(self.saveMenu)
         self.saveBtn.setToolTip("Save waveform to CSV file or PNG file.")
+        
+        #record button
+        self.recordBtn = QPushButton('Record')
+        self.recordBtn.setFixedSize(100, 50)
+        self.recordBtn.clicked.connect(self.recordCsvAction)
+        self.recordBtn.setToolTip("Record multiple frames of waveform to many CSV files.")
 
         self.loadBtn = QPushButton('Load')
         self.loadBtn.setToolTip("Load CHx's raw data from file(*.csv, *.lsf).")
@@ -209,6 +215,15 @@ class Window(QWidget):
         self.quitBtn.clicked.connect(self.quitAction)
 
         # set the layout
+        self.defaultLengthOfCapture = "10"
+        self.recordLayout = QVBoxLayout()
+        self.recordLayout.addWidget(QLabel("No. of Frames"))
+        self.framesLineEdit = QLineEdit()
+        self.framesLineEdit.setPlaceholderText(self.defaultLengthOfCapture)
+        self.framesLineEdit.setMaximumWidth(100)
+        self.recordLayout.addWidget(self.framesLineEdit)
+        self.recordLayout.addWidget(self.recordBtn)
+
         self.waveLayout = QHBoxLayout()
         self.waveLayout.addWidget(self.canvas)
 
@@ -221,6 +236,7 @@ class Window(QWidget):
         self.wavectrlLayout.addWidget(self.homeBtn)
         self.wavectrlLayout.addWidget(self.captureBtn)
         self.wavectrlLayout.addWidget(self.contBtn)
+        self.wavectrlLayout.addLayout(self.recordLayout)
 
         self.saveloadLayout = QHBoxLayout()
         self.saveloadLayout.addWidget(self.saveBtn)
@@ -259,7 +275,29 @@ class Window(QWidget):
         if(dso.chnum==4):
             self.ch3checkBox.setEnabled(self.typeFlag)
             self.ch4checkBox.setEnabled(self.typeFlag)
-
+    def recordCsvAction(self):
+        if(self.typeFlag==True): #Save raw data to csv file.
+            file_name=QFileDialog.getSaveFileName(self, "Save as", 'temp', "Fast CSV File(*.CSV)")[0]
+            if re.search(r'\.\w{3}$',file_name) == None : 
+                file_name = file_name
+            elif(file_name==''):
+                return
+            numCaptures = int(self.defaultLengthOfCapture)
+            try:
+                numCaptures = int(self.framesLineEdit.text())
+            except ValueError :
+                print(f"error in value, proceeding with default {self.defaultLengthOfCapture} captures")
+                numCaptures = int(self.defaultLengthOfCapture)
+            assert numCaptures>0
+            for file_index in range(numCaptures):
+                if file_index %100==0:
+                    if file_index %500==0:
+                        print(file_index, "500th frame")
+                    else:
+                        print(file_index)
+                self.captureAction_FetchData()
+                self.save_file(file_name[:-4]+f"{file_index:07d}"+".CSV")
+            print("done long capture")
     def saveCsvAction(self):
         if(self.typeFlag==True): #Save raw data to csv file.
             file_name=QFileDialog.getSaveFileName(self, "Save as", '', "Fast CSV File(*.CSV)")[0]
@@ -267,73 +305,76 @@ class Window(QWidget):
                 file_name = file_name + '.csv'
             elif(file_name==''):
                 return
-            num=len(dso.ch_list)
-            #print num
-            for ch in range(num):
-                if(dso.info[ch]==[]):
-                    print('Failed to save data, raw data information is required!')
-                    return
-            f = open(file_name, 'w+')
-            item=len(dso.info[0])
-            #Write file header.
-            if any(dso.osname == a for a in ['win','win10']) : 
-                f.write('%s,\n' % dso.info[0][0])
-            else :
-                f.write('%s,\r\n' % dso.info[0][0])
-            for x in range(1,  23):
-                str=''
-                for ch in range(num):
-                    str+=('%s,' % dso.info[ch][x])
-                if any(dso.osname == a for a in ['win','win10']) : 
-                    str+='\n'
-                else :
-                    str+='\r\n'
-                f.write(str)
-            #Write Fast CSV mode only.
+            self.save_file(file_name)
+            
+    def save_file(self,file_name):
+        num=len(dso.ch_list)
+        #print num
+        for ch in range(num):
+            if(dso.info[ch]==[]):
+                print('Failed to save data, raw data information is required!')
+                return
+        f = open(file_name, 'w+')
+        item=len(dso.info[0])
+        #Write file header.
+        if any(dso.osname == a for a in ['win','win10']) : 
+            f.write('%s,\n' % dso.info[0][0])
+        else :
+            f.write('%s,\r\n' % dso.info[0][0])
+        for x in range(1,  23):
             str=''
             for ch in range(num):
-                str+='Mode,Fast,'
+                str+=('%s,' % dso.info[ch][x])
             if any(dso.osname == a for a in ['win','win10']) : 
                 str+='\n'
             else :
                 str+='\r\n'
             f.write(str)
+        #Write Fast CSV mode only.
+        str=''
+        for ch in range(num):
+            str+='Mode,Fast,'
+        if any(dso.osname == a for a in ['win','win10']) : 
+            str+='\n'
+        else :
+            str+='\r\n'
+        f.write(str)
 
+        str=''
+        if(num==1):
+            str+=('%s,' % dso.info[0][24])
+        else:
+            for ch in range(num):
+                str+=('%s,,' % dso.info[ch][24])
+        if any(dso.osname == a for a in ['win','win10']) : 
+            str+='\n'
+        else :
+            str+='\r\n'
+        f.write(str)
+        #Write raw data.
+        item=len(dso.iWave[0])
+        #print item
+        tenth=int(item/10)
+        n_tenth=tenth-1
+        percent=10
+        for x in range(item):
             str=''
             if(num==1):
-                str+=('%s,' % dso.info[0][24])
+                str+=('%s,' % dso.iWave[0][x])
             else:
                 for ch in range(num):
-                    str+=('%s,,' % dso.info[ch][24])
+                    str+=('%s, ,' % dso.iWave[ch][x])
             if any(dso.osname == a for a in ['win','win10']) : 
                 str+='\n'
             else :
                 str+='\r\n'
             f.write(str)
-            #Write raw data.
-            item=len(dso.iWave[0])
-            #print item
-            tenth=int(item/10)
-            n_tenth=tenth-1
-            percent=10
-            for x in range(item):
-                str=''
-                if(num==1):
-                    str+=('%s,' % dso.iWave[0][x])
-                else:
-                    for ch in range(num):
-                        str+=('%s, ,' % dso.iWave[ch][x])
-                if any(dso.osname == a for a in ['win','win10']) : 
-                    str+='\n'
-                else :
-                    str+='\r\n'
-                f.write(str)
-                if(x==n_tenth):
-                    n_tenth+=tenth
-                    print('%3d %% Saved\r'%percent),
-                    percent+=10
-            f.close()
-            return
+            if(x==n_tenth):
+                n_tenth+=tenth
+                print('%3d %% Saved\r'%percent),
+                percent+=10
+        f.close()
+        return
     def savePngAction(self):
         #Save figure to png file.
         file_name=QFileDialog.getSaveFileName(self, "Save as", '', "PNG File(*.png)")[0]
@@ -376,7 +417,7 @@ class Window(QWidget):
         if(dso.connection_status==1):
             dso.closeIO()
         self.close()
-
+        
     def contAction(self):
         print("contAction")
         if(self.contFlag==True):
@@ -385,10 +426,35 @@ class Window(QWidget):
             self.contFlag=True
         self.contBtn.setChecked(self.contFlag)
         if self.contFlag:
-            self.contTimer.start(200) # sample every xxx milliseconds
+            self.contTimer.start(5) # sample every xxx milliseconds
         else:
             self.contTimer.stop()
 
+    def captureAction_FetchData(self):
+        dso.iWave=[[], [], [], []]
+        dso.ch_list=[]
+        if(self.typeFlag==True): #Get raw data.
+            draw_flag=False
+            #Turn on the selected channels.
+            if((self.ch1checkBox.isChecked()==True) and (dso.isChannelOn(1)==False)):
+                dso.write(":CHAN1:DISP ON\n")           #Set CH1 on.
+            if((self.ch2checkBox.isChecked()==True) and (dso.isChannelOn(2)==False)):
+                dso.write(":CHAN2:DISP ON\n")           #Set CH2 on.
+            if(dso.chnum==4):
+                if((self.ch3checkBox.isChecked()==True) and (dso.isChannelOn(3)==False)):
+                    dso.write(":CHAN3:DISP ON\n")       #Set CH3 on.
+                if((self.ch4checkBox.isChecked()==True) and (dso.isChannelOn(4)==False)):
+                    dso.write(":CHAN4:DISP ON\n")       #Set CH4 on.
+            #Get all the selected channel's raw datas.
+            if(self.ch1checkBox.isChecked()==True):
+                dso.getRawData(True, 1)              #Read CH1's raw data from DSO (including header).
+            if(self.ch2checkBox.isChecked()==True):
+                dso.getRawData(True, 2)              #Read CH2's raw data from DSO (including header).
+            if(dso.chnum==4):
+                if(self.ch3checkBox.isChecked()==True):
+                    dso.getRawData(True, 3)          #Read CH3's raw data from DSO (including header).
+                if(self.ch4checkBox.isChecked()==True):
+                    dso.getRawData(True, 4)          #Read CH4's raw data from DSO (including header).
     def captureAction(self):
         dso.iWave=[[], [], [], []]
         dso.ch_list=[]
