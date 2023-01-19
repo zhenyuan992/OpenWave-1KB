@@ -1,10 +1,3 @@
-![Python logo](/image/python-logo.png)
-
-This is a Python program.
-
-
-
-
 OpenWave-1KB
 ============
 ![GetImage](/image/OpenWave256x256.jpg)
@@ -129,6 +122,10 @@ Development Tools
    * serial 0.0.97
    * pyyaml 5.4.1
    * PySerial 3.5 
+
+- **Download Windows version**
+
+[![Download OpenWave](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/openwave-1kb/files/latest/download)
 
 - **Python IDE:**
    geany:
