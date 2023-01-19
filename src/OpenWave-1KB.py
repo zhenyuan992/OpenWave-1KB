@@ -26,13 +26,14 @@ OpenWave-1KB use Qt version 4.8 library under the terms of the LGPL version 2.1.
 Description:
 OpenWave-1KB is a python example program used to get waveform and image from DSO.
 
-Version: 1.02
+Version: 1.03
 
 Created on JUL 12 2018
 Python3 3.7+ version compatible
 
 Author: Kevin Meng, (2018)
 Author: Marian Minar (2021)
+Contributor: Zhen Yuan (2022) ... Recording multiple CSV files
 """
 import matplotlib as mpl
 mpl.use("Qt5Agg")
